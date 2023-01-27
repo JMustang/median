@@ -6,12 +6,13 @@ import {
   Patch,
   Param,
   Delete,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { ArticlesService } from '../../services/articles.service';
 import { CreateArticleRequest } from '../requests/create-article.request';
 import { UpdateArticleRequest } from '../requests/update-article.request';
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
-import { ArticleEntity } from '../../articles/entities/article.entity';
+import { ArticleModel } from '../../models/article.model';
 
 @Controller('articles')
 @ApiTags('articles')
@@ -20,42 +21,42 @@ export class ArticlesController {
 
   @Post()
   @ApiCreatedResponse({
-    type: ArticleEntity,
+    type: ArticleModel,
   })
   create(@Body() createArticleDto: CreateArticleRequest) {
     return this.articlesService.create(createArticleDto);
   }
 
   @Get()
-  @ApiOkResponse({ type: ArticleEntity, isArray: true })
+  @ApiOkResponse({ type: ArticleModel, isArray: true })
   findAll() {
     return this.articlesService.findAll();
   }
 
   @Get('drafts')
-  @ApiOkResponse({ type: ArticleEntity, isArray: true })
+  @ApiOkResponse({ type: ArticleModel, isArray: true })
   findDrafts() {
     return this.articlesService.findDrafts();
   }
 
   @Get(':id')
-  @ApiOkResponse({ type: ArticleEntity })
-  findOne(@Param('id') id: string) {
-    return this.articlesService.findOne(+id);
+  @ApiOkResponse({ type: ArticleModel })
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.articlesService.findOne(id);
   }
 
   @Patch(':id')
-  @ApiOkResponse({ type: ArticleEntity })
+  @ApiOkResponse({ type: ArticleModel })
   update(
-    @Param('id') id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Body() updateArticleDto: UpdateArticleRequest,
   ) {
-    return this.articlesService.update(+id, updateArticleDto);
+    return this.articlesService.update(id, updateArticleDto);
   }
 
   @Delete(':id')
-  @ApiOkResponse({ type: ArticleEntity })
-  remove(@Param('id') id: string) {
-    return this.articlesService.remove(+id);
+  @ApiOkResponse({ type: ArticleModel })
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.articlesService.remove(id);
   }
 }
